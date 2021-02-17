@@ -13,4 +13,5 @@ urlpatterns = [
     path("token/", jwt_views.TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
     path("", include(router.urls)),
+    path("posts/<int:post_id>/like/", views.LikeView.as_view()),
 ]
