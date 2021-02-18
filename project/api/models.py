@@ -7,8 +7,7 @@ import datetime
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    last_login = models.DateField(null=True)
-    last_request = models.DateField(null=True)
+    last_request = models.DateTimeField(null=True)
 
 
 @receiver(post_save, sender=User)

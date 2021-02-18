@@ -2,10 +2,19 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from api.models import Post
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.utils import timezone
+
+
+class TokenObtainPairWithLastLoginSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        self.user.last_login = timezone.now()
+        self.user.save()
+        return data
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    last_login = serializers.ReadOnlyField(source="profile.last_login")
     last_request = serializers.ReadOnlyField(source="profile.last_request")
 
     class Meta:

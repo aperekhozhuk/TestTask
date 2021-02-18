@@ -6,6 +6,7 @@ from api.serializers import (
     PostDetailSerializer,
     PostCreateSerializer,
     UserProfileSerializer,
+    TokenObtainPairWithLastLoginSerializer,
 )
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.views import APIView
@@ -14,7 +15,12 @@ from django.db import IntegrityError
 from django.db.models import Count
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.decorators import api_view
+from rest_framework_simplejwt.views import TokenObtainPairView
 import datetime
+
+
+class TokenAuthenticationView(TokenObtainPairView):
+    serializer_class = TokenObtainPairWithLastLoginSerializer
 
 
 class SignUpView(generics.CreateAPIView):
