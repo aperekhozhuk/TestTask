@@ -4,6 +4,15 @@ from django.contrib.auth.password_validation import validate_password
 from api.models import Post
 
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    last_login = serializers.ReadOnlyField(source="profile.last_login")
+    last_request = serializers.ReadOnlyField(source="profile.last_request")
+
+    class Meta:
+        model = User
+        fields = ("id", "username", "last_login", "last_request")
+
+
 class SignUpSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(

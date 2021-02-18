@@ -5,6 +5,7 @@ from api.serializers import (
     PostListSerializer,
     PostDetailSerializer,
     PostCreateSerializer,
+    UserProfileSerializer,
 )
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.views import APIView
@@ -117,3 +118,8 @@ def analytics_view(request):
         .order_by("date")
     )
     return Response(analytics, status=status.HTTP_200_OK)
+
+
+class UserProfileViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
