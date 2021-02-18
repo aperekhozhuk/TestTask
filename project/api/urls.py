@@ -14,4 +14,6 @@ urlpatterns = [
     path("token/refresh/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
     path("", include(router.urls)),
     path("posts/<int:post_id>/like/", views.LikeView.as_view()),
+    # You can specify "date_from" and "date_to" query parameters in format "YYYY-MM-DD"
+    path("analytics/", views.analytics_view, name="analytics"),
 ]

@@ -10,7 +10,10 @@ from rest_framework import generics, mixins, viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import IntegrityError
+from django.db.models import Count
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.decorators import api_view
+import datetime
 
 
 class SignUpView(generics.CreateAPIView):
@@ -81,3 +84,36 @@ class LikeView(APIView):
             )
         like.delete()
         return Response({"message": "Post unliked!"}, status=status.HTTP_200_OK)
+
+
+@api_view()
+def analytics_view(request):
+    params = request.query_params
+    date_from = params.get("date_from")
+    date_to = params.get("date_to")
+    date_error_text = "Date should be in correct format (YYYY-MM-DD)"
+    errors = {}
+    date_filters = {}
+    # Checking "date_from" optional parameter:
+    if date_from:
+        try:
+            date_from = datetime.datetime.strptime(date_from, "%Y-%m-%d").date()
+            date_filters["date__gt"] = date_from
+        except ValueError:
+            errors["date_from"] = date_error_text
+    # Checking "date_to" optional parameter:
+    if date_to:
+        try:
+            date_to = datetime.datetime.strptime(date_to, "%Y-%m-%d").date()
+            date_filters["date__lt"] = date_to
+        except ValueError:
+            errors["date_to"] = date_error_text
+    if errors:
+        return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+    analytics = (
+        Like.objects.filter(**date_filters)
+        .values("date")
+        .annotate(likes=Count("id"))
+        .order_by("date")
+    )
+    return Response(analytics, status=status.HTTP_200_OK)
